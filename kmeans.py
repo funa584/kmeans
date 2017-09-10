@@ -19,6 +19,8 @@ class KMeansCore:
         self.data_list = []
         self.cluster_number = 0
         self.data_number = 0
+        self.last_move_count = -1
+        self.run_count = 0
 
     def set_cluster_number(self, number):
         self.cluster_number = number
@@ -44,6 +46,7 @@ class KMeansCore:
     def run(self):
         self.calc_center()
         self.reassign_data()
+        self.run_count += 1
 
     def calc_center(self):
         for i in self.cluster_list:
@@ -52,10 +55,12 @@ class KMeansCore:
             for j in i.data_list:
                 sum_x += j.pos_x
                 sum_y += j.pos_y
-            i.centroid_x = sum_x / i.data_number
-            i.centroid_y = sum_y / i.data_number
+            if i.data_number != 0:
+                i.centroid_x = sum_x / i.data_number
+                i.centroid_y = sum_y / i.data_number
 
     def reassign_data(self):
+        self.last_move_count = 0
         for i in self.cluster_list:
             i.data_list = []  # reset list
             i.data_number = 0
@@ -66,6 +71,7 @@ class KMeansCore:
 
     def find_closest(self, data: Point):
         closest = float("inf")
+        last_cluster = data.belong_cluster
         for i in self.cluster_list:
             a = math.pow(data.pos_x - i.centroid_x, 2)
             b = math.pow(data.pos_y - i.centroid_y, 2)
@@ -73,3 +79,14 @@ class KMeansCore:
             if distance < closest:
                 closest = distance
                 data.belong_cluster = i.id
+        if last_cluster != data.belong_cluster:
+            self.last_move_count += 1
+
+    def reset(self, cluster_number):
+        self.last_move_count = -1
+        self.set_cluster_number(cluster_number)
+        for i in self.data_list:
+            i.belong_cluster = random.randint(0, self.cluster_number - 1)
+            self.cluster_list[i.belong_cluster].data_list.append(i)
+            self.cluster_list[i.belong_cluster].data_number += 1
+

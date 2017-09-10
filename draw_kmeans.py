@@ -21,7 +21,21 @@ class KMeans(KMeansCore):
             (0, 255, 0),  # green
             (255, 255, 0),  # yellow
             (0, 255, 255),  # cyan
-            (255, 0, 255), ]  # magenta
+            (255, 0, 255),  # magenta
+            (128, 0, 0),
+            (0, 128, 0),
+            (0, 0, 128),
+            (128, 128, 0),
+            (128, 0, 128),
+            (0, 128, 128),
+            (64, 0, 0),
+            (0, 64, 0),
+            (0, 0, 64),
+            (64, 64, 0),
+            (64, 0, 64),
+            (0, 64, 64),
+            (64, 64, 64)
+        ]
         self.marker_border_color = (0, 0, 0)
 
     def set_canvas_size(self, size_x: int, size_y: int):
@@ -40,7 +54,6 @@ class KMeans(KMeansCore):
 
     def new_canvas(self):
         canvas_size = (self.canvas_size_x, self.canvas_size_y)
-        print(canvas_size, self.canvas_background_color)
         self.canvas = Image.new("RGB", canvas_size, self.canvas_background_color)
 
     def draw_points(self):
