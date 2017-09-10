@@ -4,6 +4,7 @@
 
 from kmeans import *
 from PIL import Image
+import numpy as np
 
 
 class KMeans(KMeansCore):
@@ -13,7 +14,7 @@ class KMeans(KMeansCore):
         self.canvas_size_x = int
         self.canvas_size_y = int
         self.canvas_background_color = (255, 255, 255)
-        self.draw_point_size = (5, 5)
+        self.draw_point_size = 8
         self.point_color_list = [
             (0, 0, 255),  # blue
             (255, 0, 0),  # red
@@ -21,6 +22,7 @@ class KMeans(KMeansCore):
             (255, 255, 0),  # yellow
             (0, 255, 255),  # cyan
             (255, 0, 255), ]  # magenta
+        self.marker_border_color = (0, 0, 0)
 
     def set_canvas_size(self, size_x: int, size_y: int):
         self.canvas_size_x = size_x
@@ -44,8 +46,20 @@ class KMeans(KMeansCore):
     def draw_points(self):
         for i in self.cluster_list:
             color = self.point_color_list[i.id]
-            marker = Image.new("RGB", self.draw_point_size, color)
+            marker = self.create_marker(color)
 
             for j in i.data_list:
                 pos = (int(j.pos_x), int(j.pos_y))
                 self.canvas.paste(marker, pos)
+
+    def create_marker(self, color):
+        # square
+        marker = Image.new("RGB", (self.draw_point_size, self.draw_point_size), color)
+        arr = np.array(marker)
+        for i in range(self.draw_point_size):  # draw border
+            arr[0][i] = self.marker_border_color  # left
+            arr[self.draw_point_size-1][i] = self.marker_border_color  # right
+            arr[i][0] = self.marker_border_color  # top
+            arr[i][self.draw_point_size-1] = self.marker_border_color  # bottom
+
+        return Image.fromarray(arr)
